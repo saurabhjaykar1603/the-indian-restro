@@ -13,14 +13,22 @@ const StyledAppLayout = styled.div`
     grid-template-columns: 26rem 1fr;
     grid-template-rows: auto 1fr;
     `
-
+const Container = styled.div`
+max-width: 125rem;
+margin: 0 auto;
+display: flex;
+flex-direction: column;
+gap: 3.2rem;
+`
 function AppLayout() {
     return (
         <StyledAppLayout>
             <Sidebar />
             <Header />
             <Main>
+                <Container>
                 <Outlet />
+                </Container>
             </Main>
         </StyledAppLayout>
     )
