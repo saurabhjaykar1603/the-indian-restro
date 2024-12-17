@@ -4,6 +4,8 @@ import { formatCurrency } from "../../utils/helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteCabin } from "../../services/apiCabins";
 import toast from "react-hot-toast";
+import CreateCabinForm from "./CreateCabinForm";
+import { useState } from "react";
 
 const TableRow = styled.div`
   display: grid;
@@ -46,6 +48,7 @@ const Discount = styled.div`
 
 function CabinRow({ cabin }) {
   const { name, maxCapacity, regularPrice, discount, image, id } = cabin;
+  const [showForm, setShowForm] = useState(false)
   const queryClient = useQueryClient()
   const { mutate, isPending, } = useMutation({
     mutationFn: (id) => deleteCabin(id),
@@ -58,14 +61,21 @@ function CabinRow({ cabin }) {
     }
   })
   return (
-    <TableRow>
-      <Img src={image} alt={`${name} cabin`} />
-      <Cabin>{name}</Cabin>
-      <div>Fits up to {maxCapacity} guests</div>
-      <Price>{formatCurrency(regularPrice)}</Price>
-      {discount > 0 && <Discount>{formatCurrency(discount)}</Discount>}
-      <button disabled={isPending} onClick={() => mutate(id)}>Delete</button>
-    </TableRow>
+    <>
+      <TableRow>
+        <Img src={image} alt={`${name} cabin`} />
+        <Cabin>{name}</Cabin>
+        <div>Fits up to {maxCapacity} guests</div>
+        <Price>{formatCurrency(regularPrice)}</Price>
+        {discount > 0 && <Discount>{formatCurrency(discount)}</Discount>}
+
+        <div>
+          <button disabled={isPending} onClick={() => setShowForm((s) => !s)}>Edit</button>
+          <button disabled={isPending} onClick={() => mutate(id)}>Delete</button>
+        </div>
+      </TableRow>
+      {showForm && <CreateCabinForm cabinToEdit={cabin} />}
+    </>
   );
 }
 
@@ -78,6 +88,10 @@ CabinRow.propTypes = {
     image: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
+    isDeleted: PropTypes.bool.isRequired,
+    createdAt: PropTypes.string.isRequired,
+    updatedAt: PropTypes.string.isRequired,
+    cabinType: PropTypes.string.isRequired,
   }).isRequired,
 };
 
